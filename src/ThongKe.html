@@ -3,9 +3,70 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Menu Điều Hướng</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+        }
+        nav {
+            background-color:'white';
+            padding: 10px 0;
+            display: flex;
+            justify-content: center;
+        }
+        .menu-item {
+            color: white;
+            padding: 10px 20px;
+            text-decoration: none;
+            margin: 0 5px;
+            background-color: #cbbbbb;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        .menu-item.active {
+            background-color: #4CAF50;
+        }
+        iframe {
+            width: 100%;
+            height: calc(100vh - 60px);
+            border: none;
+        }
+    </style>
 </head>
 <body>
-    
+    <nav>
+        <a href="today.html" class="menu-item" data-page="today.html">Hôm nay</a>
+        <a href="week.html" class="menu-item" data-page="week.html">1 Tuần</a>
+        <a href="month.html" class="menu-item" data-page="month.html">1 Tháng</a>
+        <a href="6months.html" class="menu-item" data-page="6months.html">6 Tháng</a>
+        <a href="year.html" class="menu-item" data-page="year.html">1 Năm</a>
+        <a href="all.html" class="menu-item" data-page="all.html">Tất cả</a>
+    </nav>
+
+    <iframe id="content-frame" src="today.html"></iframe>
+
+    <script>
+        const menuItems = document.querySelectorAll('.menu-item');
+        const iframe = document.getElementById('content-frame');
+
+        menuItems.forEach(item => {
+            item.addEventListener('click', (event) => {
+                event.preventDefault();
+                
+                // Xóa class active khỏi tất cả các mục
+                menuItems.forEach(i => i.classList.remove('active'));
+
+                // Thêm class active vào mục hiện tại
+                item.classList.add('active');
+
+                // Thay đổi nội dung iframe
+                iframe.src = item.getAttribute('data-page');
+            });
+        });
+
+        // Đặt mặc định mục đầu tiên là active
+        menuItems[0].classList.add('active');
+    </script>
 </body>
 </html>
