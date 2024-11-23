@@ -55,7 +55,7 @@
 
     <script>
         // Fetch order data from API
-        fetch('http://192.168.1.8:3000/api/getOrdersAdmin')
+        fetch('http://localhost:3000/api/getOrdersAdmin')
             .then(response => response.json())
             .then(data => {
                 const orderTableBody = document.querySelector('#orderTable tbody');
@@ -115,7 +115,7 @@
 
         // Update order status in the backend
         function updateOrderStatus(orderId, newStatus, button) {
-            fetch(`http://192.168.1.8:3000/api/updateOrderStatus/${orderId}`, {
+            fetch(`http://localhost:3000/api/updateOrderStatus/${orderId}`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
