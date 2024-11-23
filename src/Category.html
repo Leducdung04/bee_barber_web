@@ -297,12 +297,8 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        fetchCategories(); // Reload category list
-                        categoryForm.reset(); // Reset form
-                    } else {
-                        alert('Có lỗi xảy ra khi thêm category');
-                    }
+                    fetchCategories();
+                    categoryForm.reset();
                 })
                 .catch(error => console.error('Error adding category:', error));
         });
@@ -339,12 +335,8 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.success) {
-                            fetchCategories();
-                            closeModal(); // Close the modal
-                        } else {
-                            alert('Có lỗi xảy ra khi cập nhật category');
-                        }
+                        fetchCategories();
+                        closeModal(); // Close the modal
                     })
                     .catch(error => console.error('Error updating category:', error));
             };

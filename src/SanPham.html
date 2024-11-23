@@ -260,9 +260,8 @@
                 <label for="editSellingPrice">Giá Bán</label>
                 <input type="number" id="editSellingPrice" placeholder="Nhập giá bán" required>
 
-                <label for="productCategory">Thể Loại</label>
-                <select id="productCategory" required>
-                    <!-- Options will be dynamically loaded -->
+                <label for="category_id">Thể Loại</label>
+                <select id="editProductCategory" required>
                 </select>
 
                 <label for="editProductImage">Ảnh</label>
@@ -333,27 +332,49 @@
             })
                 .then(response => response.json())
                 .then(data => {
-                    if (data.success) {
-                        fetchProducts(); // Reload product list
-                        productForm.reset(); // Reset form
-                    } else {
-                        alert('Có lỗi xảy ra khi thêm sản phẩm');
-                    }
+
+                        fetchProducts();
+                        productForm.reset();
+                   
                 })
                 .catch(error => console.error('Error adding product:', error));
         });
 
         // Handle edit product modal
-        function openEditModal(id, name, description, import_price, price_selling, image) {
+        function openEditModal(id, name, description, import_price, price_selling, category_id, image) {
+            // Populate form fields with current product data
             document.getElementById('editProductName').value = name;
             document.getElementById('editProductDescription').value = description;
             document.getElementById('editImportPrice').value = import_price;
             document.getElementById('editSellingPrice').value = price_selling;
             document.getElementById('editProductImage').value = ''; // Clear file input
 
+            // Fetch categories for the dropdown
+            const categoryDropdown = document.getElementById('editProductCategory');
+            fetch('http://localhost:3000/api/categoryProducts/get_list_Category_Product')
+                .then(response => response.json())
+                .then(categories => {
+                    // Clear existing options
+                    categoryDropdown.innerHTML = '<option value="">Chọn Thể Loại</option>';
+
+                    // Populate dropdown with categories
+                    categories.forEach(category => {
+                        const option = document.createElement('option');
+                        option.value = category._id;
+                        option.textContent = category.name;
+                        if (category._id === category_id) {
+                            option.selected = true; // Set selected category
+                        }
+                        categoryDropdown.appendChild(option);
+                    });
+                })
+                .catch(error => console.error('Error fetching categories:', error));
+
+            // Show the modal
             const modal = document.getElementById('editModal');
             modal.style.display = "block";
 
+            // Handle form submission
             const editForm = document.getElementById('editForm');
             editForm.onsubmit = function (e) {
                 e.preventDefault();
@@ -363,6 +384,7 @@
                 const editImportPrice = document.getElementById('editImportPrice').value;
                 const editSellingPrice = document.getElementById('editSellingPrice').value;
                 const editImage = document.getElementById('editProductImage').files[0];
+                const editCategory = categoryDropdown.value; // Get selected category
 
                 const editData = new FormData();
                 editData.append('id', id);
@@ -370,6 +392,7 @@
                 editData.append('description', editDescription);
                 editData.append('import_price', editImportPrice);
                 editData.append('price_selling', editSellingPrice);
+                editData.append('category_id', editCategory);
                 if (editImage) {
                     editData.append('image', editImage);
                 }
@@ -380,12 +403,10 @@
                 })
                     .then(response => response.json())
                     .then(data => {
-                        if (data.success) {
+                    
                             fetchProducts();
                             closeModal(); // Close the modal
-                        } else {
-                            alert('Có lỗi xảy ra khi cập nhật sản phẩm');
-                        }
+ 
                     })
                     .catch(error => console.error('Error updating product:', error));
             };
