@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -12,11 +13,13 @@
             display: flex;
             background-color: #f4f4f4;
         }
+
         .container {
             width: 100%;
             display: flex;
             padding: 20px;
         }
+
         .form-container {
             width: 30%;
             background-color: #fff;
@@ -25,15 +28,18 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             margin-right: 20px;
         }
+
         .form-container h2 {
             text-align: center;
             margin-bottom: 20px;
         }
+
         .form-container label {
             display: block;
             margin-bottom: 8px;
             font-weight: bold;
         }
+
         .form-container input[type="text"],
         .form-container input[type="file"] {
             width: 100%;
@@ -42,6 +48,7 @@
             border-radius: 5px;
             border: 1px solid #ddd;
         }
+
         .form-container button {
             background-color: #4CAF50;
             color: white;
@@ -52,15 +59,18 @@
             border-radius: 5px;
             font-size: 16px;
         }
+
         .form-container button:hover {
             background-color: #45a049;
         }
+
         .form-container img {
             width: 100%;
             height: auto;
             border-radius: 5px;
             margin-top: 10px;
         }
+
         .list-container {
             width: 70%;
             background-color: #fff;
@@ -69,22 +79,28 @@
             box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
             overflow-y: auto;
         }
+
         .list-container h2 {
             text-align: center;
             margin-bottom: 20px;
         }
+
         table {
             width: 100%;
             border-collapse: collapse;
         }
-        th, td {
+
+        th,
+        td {
             padding: 10px;
             text-align: left;
             border: 1px solid #ddd;
         }
+
         th {
             background-color: #f2f2f2;
         }
+
         .btn-edit,
         .btn-delete {
             padding: 5px 10px;
@@ -93,20 +109,25 @@
             border-radius: 5px;
             cursor: pointer;
         }
+
         .btn-edit {
             background-color: #4CAF50;
             color: white;
         }
+
         .btn-edit:hover {
             background-color: #45a049;
         }
+
         .btn-delete {
             background-color: #f44336;
             color: white;
         }
+
         .btn-delete:hover {
             background-color: #e53935;
         }
+
         /* Modal Styles */
         .modal {
             display: none;
@@ -117,10 +138,11 @@
             width: 100%;
             height: 100%;
             overflow: auto;
-            background-color: rgb(0,0,0);
-            background-color: rgba(0,0,0,0.4);
+            background-color: rgb(0, 0, 0);
+            background-color: rgba(0, 0, 0, 0.4);
             padding-top: 60px;
         }
+
         .modal-content {
             background-color: #fff;
             margin: 5% auto;
@@ -128,18 +150,21 @@
             border-radius: 8px;
             width: 80%;
         }
+
         .close {
             color: #aaa;
             float: right;
             font-size: 28px;
             font-weight: bold;
         }
+
         .close:hover,
         .close:focus {
             color: black;
             text-decoration: none;
             cursor: pointer;
         }
+
         .modal input[type="text"],
         .modal input[type="file"] {
             width: 100%;
@@ -148,6 +173,7 @@
             border-radius: 5px;
             border: 1px solid #ddd;
         }
+
         .modal button {
             background-color: #4CAF50;
             color: white;
@@ -157,11 +183,13 @@
             border-radius: 5px;
             font-size: 16px;
         }
+
         .modal button:hover {
             background-color: #45a049;
         }
     </style>
 </head>
+
 <body>
 
     <div class="container">
@@ -298,7 +326,7 @@
 
                 const editData = new FormData();
                 editData.append('id', id);
-                
+
                 editData.append('name', editName);
                 editData.append('description', editDescription);
                 if (editImage) {
@@ -306,7 +334,7 @@
                 }
 
                 fetch(`http://localhost:3000/api/categorys/update_category/${id}`, {
-                    method: 'POST',
+                    method: 'PUT',
                     body: editData
                 })
                     .then(response => response.json())
@@ -328,12 +356,16 @@
             modal.style.display = "none";
         }
 
-        // Handle delete category
         function deleteCategory(id) {
             fetch(`http://localhost:3000/api/categorys/delete_category/${id}`, {
-                method: 'put'
+                method: 'DELETE',
             })
-                .then(response => response.json())
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error(`HTTP error! status: ${response.status}`);
+                    }
+                    return response.json();
+                })
                 .then(data => {
                     if (data.success) {
                         fetchCategories();
@@ -344,9 +376,11 @@
                 .catch(error => console.error('Error deleting category:', error));
         }
 
+
         // Initial fetch categories
         fetchCategories();
     </script>
 
 </body>
+
 </html>
