@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f7fc;
+            display: flex;
+        }
+
+        /* Sidebar Styling */
+        .sidebar {
+            height: 100vh;
+            width: 250px;
+            background-color: #2c3e50;
+            color: white;
+            padding-top: 30px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            transition: all 0.3s ease-in-out;
+        }
+
+        .sidebar a {
+            display: block;
+            padding: 15px;
+            color: white;
+            text-decoration: none;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        .sidebar a:hover {
+            background-color: #34495e;
+        }
+
+        .sidebar a.active {
+            background-color: #1abc9c;
+        }
+
+        .sidebar .logo {
+            font-size: 24px;
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+            font-weight: bold;
+        }
+
+        /* Main Content Styling */
+        .content {
+            margin-left: 250px;
+            width: 100%;
+            transition: margin-left 0.3s ease-in-out;
+        }
+
+        /* iframe Styling */
+        iframe {
+            width: 100%;
+            height: 100vh;
+            border: none;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .sidebar {
+                width: 60px;
+                padding-top: 10px;
+                transition: all 0.3s ease-in-out;
+            }
+
+            .sidebar a {
+                text-align: center;
+                padding: 15px;
+            }
+
+            .content {
+                margin-left: 60px;
+                padding: 20px;
+            }
+
+            .menu-toggle {
+                display: block;
+                position: absolute;
+                top: 15px;
+                right: 15px;
+                background-color: #2c3e50;
+                color: white;
+                border: none;
+                padding: 10px;
+                font-size: 20px;
+                border-radius: 50%;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="logo">Admin BeeBarber</div>
+        <a href="javascript:void(0)" id="home" onclick="loadPage('home.html')">Home</a>
+        <a href="javascript:void(0)" id="about" onclick="loadPage('Oder.html')">Đơn Hàng</a>
+        <a href="javascript:void(0)" id="services" onclick="loadPage('Categori.html')">Thể loại dịch vụ</a>
+        <a href="javascript:void(0)" id="contact" onclick="loadPage('DichVu.html')"> Dịch vụ</a>
+        <a href="javascript:void(0)" id="contact" onclick="loadPage('TheLoaiSP.html')">Thể loại sản phẩm</a>
+        <a href="javascript:void(0)" id="contact" onclick="loadPage('SanPham.html')">Sản phẩm</a>
+        <a href="javascript:void(0)" id="contact" onclick="loadPage('Banner.html')">Banner</a>
+        <a href="javascript:void(0)" id="contact" onclick="loadPage('Barber.html')">Thợ Cắt</a>
+        <a href="javascript:void(0)" id="contact" onclick="loadPage('ThongKe.html')">Thống kê</a>
+        <a href="javascript:void(0)" id="contact" onclick="loadPage('DoanhThu.html')">Doanh thu</a>
+    </div>
+
+    <!-- Main Content (iframe) -->
+    <div class="content">
+        <iframe id="contentFrame" src="home.html"></iframe>
+    </div>
+
+    <script>
+        // Function to load content in iframe
+        function loadPage(page) {
+            const iframe = document.getElementById('contentFrame');
+            iframe.src = page;
+
+            // Set active class on selected menu item
+            const links = document.querySelectorAll('.sidebar a');
+            links.forEach(link => {
+                link.classList.remove('active');
+            });
+            const activeLink = document.getElementById(page.split('.')[0]);
+            activeLink.classList.add('active');
+        }
+
+        // Set default active page on load
+        document.addEventListener("DOMContentLoaded", function () {
+            loadPage('home.html');
+        });
+    </script>
+</body>
+
+</html>
