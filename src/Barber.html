@@ -3,9 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Barber Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f7fa;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: row;
+            justify-content: space-between;
+            padding: 20px;
+        }
+
+        /* Form Container */
+        .form-container {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            width: 45%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            font-size: 14px;
+            color: #333;
+            margin-bottom: 8px;
+            display: block;
+        }
+
+        .input-field, .btn-add, .btn-cancel {
+            width: 100%;
+            padding: 12px;
+            font-size: 14px;
+            border-radius: 5px;
+            border: 1px solid #ddd;
+            box-sizing: border-box;
+        }
+
+        .input-field {
+            margin-bottom: 10px;
+        }
+
+        .btn-add {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .btn-add:hover {
+            background-color: #45a049;
+        }
+
+        .btn-cancel {
+            background-color: #f44336;
+            color: white;
+            border: none;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+
+        .btn-cancel:hover {
+            background-color: #e53935;
+        }
+
+        .barber-list-container {
+            width: 50%;
+            padding-left: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .barber-item {
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px;
+            margin-bottom: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .barber-item img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+
+        .barber-item p {
+            color: #555;
+            font-size: 14px;
+            margin: 5px 0;
+        }
+
+        .barber-item .btn-update {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: background-color 0.3s;
+        }
+
+        .barber-item .btn-update:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .form-container, .barber-list-container {
+                width: 100%;
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-    
+    <h1 style="margin: 24px;">Quản lý Thợ Cắt Tóc</h1>
+    <div class="container">
+        <!-- Form to Add or Edit Barber -->
+        <div class="form-container">
+            <h2 id="form-title">Add Barber</h2>
+            <div class="form-group">
+                <label for="name">Name:</label>
+                <input type="text" id="name" class="input-field">
+            </div>
+            <div class="form-group">
+                <label for="experience">Experience:</label>
+                <input type="number" id="experience" class="input-field">
+            </div>
+            <div class="form-group">
+                <label for="status">Status:</label>
+                <select id="status" class="input-field">
+                    <option value="true">Active</option>
+                    <option value="false">Inactive</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="image">Barber Image:</label>
+                <input type="file" id="image" class="input-field" accept="image/*">
+            </div>
+            <button class="btn-add" id="submit-btn" onclick="addBarber()">Add Barber</button>
+            <button class="btn-cancel" id="cancel-btn" onclick="cancelEdit()" style="display: none;">Cancel</button>
+        </div>
+
+        <!-- Barber List -->
+        <div class="barber-list-container" id="barber-list">
+            <!-- Barber items will be dynamically added here -->
+        </div>
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost:3000/api/get_list_barber';
+        let editBarberId = null;
+
+        // Fetch and display barbers
+        async function fetchBarbers() {
+            try {
+                const response = await fetch(apiUrl);
+                const barbers = await response.json();
+                const barberListContainer = document.getElementById('barber-list');
+                barberListContainer.innerHTML = '';  // Clear existing barbers
+
+                barbers.forEach(barber => {
+                    const barberItem = document.createElement('div');
+                    barberItem.classList.add('barber-item');
+                    barberItem.innerHTML = `
+                        <img style="width:120px;height:200px" src="${barber.image || '/src/img/barberBackgroug.png'}" alt="Barber Image">
+                        <p>Họ tên: ${barber.name}</p>
+                        <p>Năm kinh nghiệm: ${barber.experience} years</p>
+                        <p>Status: ${barber.status ? 'Đang hoạt động' : 'Đã nghỉ'}</p>
+                        <button class="btn-update" onclick="editBarber('${barber._id}', '${barber.name}', ${barber.experience}, ${barber.status}, '${barber.image}')">Edit</button>
+                    `;
+                    barberListContainer.appendChild(barberItem);
+                });
+            } catch (error) {
+                console.error('Error fetching barbers:', error);
+            }
+        }
+
+        // Add new barber
+        async function addBarber() {
+            const name = document.getElementById('name').value;
+            const experience = document.getElementById('experience').value;
+            const status = document.getElementById('status').value === 'true';
+            const imageFile = document.getElementById('image').files[0];
+
+            if (!name || !experience) {
+                alert('Please fill in all fields.');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('name', name);
+            formData.append('experience', experience);
+            formData.append('status', status);
+            if (imageFile) {
+                formData.append('image', imageFile);  // Append the image if it exists
+            }
+
+            try {
+                if (editBarberId) {
+                    // Update existing barber
+                    await fetch(`http://localhost:3000/api/Update_Barbers/${editBarberId}`, {
+                        method: 'PUT',
+                        body: formData,
+                    });
+                    editBarberId = null; // Reset ID after update
+                    document.getElementById('form-title').innerText = 'Add Barber';
+                    document.getElementById('submit-btn').innerText = 'Add Barber';
+                    document.getElementById('cancel-btn').style.display = 'none';  // Hide cancel button
+                } else {
+                    // Add new barber
+                    await fetch('http://localhost:3000/api/add_Barbers', {
+                        method: 'POST',
+                        body: formData,
+                    });
+                }
+                fetchBarbers();  // Refresh barber list after adding or updating
+            } catch (error) {
+                console.error('Error adding or updating barber:', error);
+            }
+        }
+
+        // Edit barber
+        function editBarber(id, name, experience, status, image) {
+            // Prefill the form with the existing barber data for editing
+            document.getElementById('name').value = name;
+            document.getElementById('experience').value = experience;
+            document.getElementById('status').value = status.toString();
+            document.getElementById('form-title').innerText = 'Edit Barber';
+            document.getElementById('submit-btn').innerText = 'Update Barber';
+            document.getElementById('cancel-btn').style.display = 'inline-block';  // Show cancel button
+            editBarberId = id;
+        }
+
+        // Cancel editing
+        function cancelEdit() {
+            editBarberId = null;
+            document.getElementById('form-title').innerText = 'Add Barber';
+            document.getElementById('submit-btn').innerText = 'Add Barber';
+            document.getElementById('cancel-btn').style.display = 'none';  // Hide cancel button
+            document.getElementById('name').value = '';
+            document.getElementById('experience').value = '';
+            document.getElementById('status').value = 'true';
+        }
+
+        // Load the list of barbers when the page loads
+        fetchBarbers();
+    </script>
 </body>
 </html>
